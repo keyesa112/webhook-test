@@ -1,17 +1,20 @@
-export async function onRequestGet() {
+export function onRequestGet() {
   return new Response("ok", { status: 200 });
 }
 
 export async function onRequestPost({ request }) {
-  let data = null;
+  let data;
   try {
     data = await request.json();
-  } catch (e) {
+  } catch {
+    console.log("POST but invalid JSON");
     return new Response("invalid json", { status: 400 });
   }
 
-  // sementara: log ke console (lihat di Pages > Functions/Logs)
-  console.log(data);
+  console.log("Incoming webhook payload:", data);
 
-  return new Response("ok", { status: 200 });
+  return new Response(JSON.stringify({ ok: true, received: data }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
 }
